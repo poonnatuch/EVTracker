@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+.env/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Project data
+ev_journeys.csv
+temp_journey.json
