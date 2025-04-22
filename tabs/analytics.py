@@ -12,8 +12,10 @@ def calculate_analytics_data(df):
     df['battery_used'] = df['battery_percent_before'] - df['battery_percent_after']
     df['avg_temperature'] = (df['temperature_before'] + df['temperature_after']) / 2
     
-    # Time and speed calculations
-    df['actual_time'] = pd.to_datetime(df['timestamp_after']) - pd.to_datetime(df['timestamp_before'])
+    # Time and speed calculations - fixed by combining date and time
+    df['start_datetime'] = pd.to_datetime(df['date_before'] + ' ' + df['timestamp_before'])
+    df['end_datetime'] = pd.to_datetime(df['date_after'] + ' ' + df['timestamp_after'])
+    df['actual_time'] = df['end_datetime'] - df['start_datetime']
     df['actual_time_minutes'] = df['actual_time'].dt.total_seconds() / 60
     df['time_difference'] = df['actual_time_minutes'] - df['google_map_estimate_time']
     df['time_accuracy'] = (df['google_map_estimate_time'] / df['actual_time_minutes']) * 100
@@ -39,7 +41,13 @@ def calculate_analytics_data(df):
             labels=['Below 0°C', '0-10°C', '10-20°C', '20-30°C', 'Above 30°C']
         )
         
-        # Time efficiency categories
+        # Time efficiency categories - add safeguard for divide by zero
+        valid_data['time_accuracy'] = np.where(
+            valid_data['actual_time_minutes'] > 0,
+            (valid_data['google_map_estimate_time'] / valid_data['actual_time_minutes']) * 100,
+            100  # Default to 100% if time is zero
+        )
+        
         valid_data['time_efficiency'] = pd.cut(
             valid_data['time_accuracy'],
             bins=[0, 80, 90, 110, 120, np.inf],
@@ -205,11 +213,12 @@ def show_time_analysis(df):
         )
     
     with col2:
-        avg_time_efficiency = df['time_efficiency'].mean() * 60  # Convert to km/hour
+        # Fixed: Use average_speed instead of time_efficiency categorical data
+        avg_speed = df['average_speed'].mean()
         st.metric(
             "Average Speed",
-            f"{avg_time_efficiency:.1f} km/h",
-            help="Average travel speed compared to estimates"
+            f"{avg_speed:.1f} km/h",
+            help="Average travel speed"
         )
     
     # Add time estimation accuracy chart
