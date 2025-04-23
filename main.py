@@ -6,6 +6,7 @@ import pandas as pd
 from tabs.track_journey import show_track_journey_tab
 from tabs.view_history import show_view_history_tab
 from tabs.analytics import show_analytics_tab
+from tabs.predictions import show_predictions_tab
 from utils.data_manager import load_data, save_data
 
 # Set page config
@@ -29,7 +30,7 @@ if 'editing_start' not in st.session_state:
 st.title("🚗 EV Journey Tracker")
 
 # Create tabs
-tab1, tab2, tab3 = st.tabs(["Track Journey", "View History", "Analytics"])
+tab1, tab2, tab3, tab4 = st.tabs(["Track Journey", "View History", "Analytics", "Predictions"])
 
 # Load data
 df = load_data()
@@ -41,3 +42,5 @@ with tab2:
     show_view_history_tab(df)
 with tab3:
     show_analytics_tab(df)
+with tab4:
+    show_predictions_tab()
