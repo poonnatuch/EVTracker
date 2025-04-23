@@ -79,8 +79,6 @@ def show_predictions_tab():
         with col1:
             google_map_km = st.number_input(
                 "Journey Distance (kilometers)",
-                min_value=0.0,
-                max_value=1000.0,
                 value=50.0,
                 step=5.0,
             )
@@ -88,8 +86,6 @@ def show_predictions_tab():
         with col2:
             google_map_estimate_time = st.number_input(
                 "Google Maps Estimated Time (minutes)",
-                min_value=0.0,
-                max_value=300.0,
                 value=30.0,
                 step=5.0,
             )
